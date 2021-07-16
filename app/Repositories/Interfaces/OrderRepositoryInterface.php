@@ -21,4 +21,9 @@ interface OrderRepositoryInterface
      * Create a model.
      */
     public function create(array $attributes): ?Model;
+
+    /**
+     * Find a model by its id.
+     */
+    public function findById(int $id): ?Model;
 }

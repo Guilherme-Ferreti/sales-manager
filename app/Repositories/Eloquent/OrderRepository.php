@@ -22,4 +22,9 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
     {
         return $this->model->create($attributes);
     }
+
+    public function findById(int $id): ?Order
+    {
+        return $this->model->find($id);
+    }
 }

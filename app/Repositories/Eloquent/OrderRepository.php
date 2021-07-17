@@ -16,7 +16,7 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
 
     public function all(): Collection
     {
-        return $this->model->with($this->with)->get();
+        return $this->model->with($this->with)->orderBy('created_at', 'desc')->get();
     }
 
     public function create(array $attributes): ?Order

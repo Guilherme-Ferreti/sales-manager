@@ -11,6 +11,10 @@ class Order extends Model
 
     protected $fillable = ['sold_at'];
 
+    protected $casts = [
+        'sold_at' => 'date',
+    ];
+
     public function address()
     {
         return $this->hasOne(Address::class);
@@ -22,5 +26,15 @@ class Order extends Model
             ->using(OrderProduct::class)
             ->withPivot('quantity', 'selling_price')
             ->withTimestamps();
+    }
+
+    public function getTotalItemsAttribute(): int
+    {
+        return ($this->relationLoaded('products') ? $this->products->sum('pivot.quantity') : 0);
+    }
+
+    public function getTotalValueAttribute(): float
+    {
+        return ($this->relationLoaded('products') ? $this->products->sum('pivot.selling_price') : 0);
     }
 }

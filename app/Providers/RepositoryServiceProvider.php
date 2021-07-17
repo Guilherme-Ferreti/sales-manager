@@ -2,9 +2,15 @@
 
 namespace App\Providers;
 
-use App\Repositories\Eloquent\OrderRepository;
-use App\Repositories\Interfaces\OrderRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Eloquent\{
+    OrderRepository,
+    AddressRepository
+};
+use App\Repositories\Interfaces\{
+    OrderRepositoryInterface,
+    AddressRepositoryInterface,
+};
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -16,6 +22,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
+        $this->app->bind(AddressRepositoryInterface::class, AddressRepository::class);
     }
 
     /**

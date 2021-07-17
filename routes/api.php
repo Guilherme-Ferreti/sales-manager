@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::apiResource('orders', OrderController::class)
         ->only('index', 'store');
+
+Route::apiResource('products', ProductController::class)
+        ->only('index');

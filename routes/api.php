@@ -20,4 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('orders', OrderController::class)
-        ->only('index');
+        ->only('index', 'store');

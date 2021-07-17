@@ -9,6 +9,8 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['sold_at'];
+
     public function address()
     {
         return $this->hasOne(Address::class);

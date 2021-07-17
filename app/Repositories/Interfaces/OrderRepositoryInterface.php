@@ -13,17 +13,22 @@ interface OrderRepositoryInterface
     public function with(string|array $relations);
 
     /**
-     * Get all models.
+     * Get all orders.
      */
     public function all(): Collection;
 
     /**
-     * Create a model.
+     * Create an order.
      */
     public function create(array $attributes): ?Model;
 
     /**
-     * Find a model by its id.
+     * Find an order by its id.
      */
     public function findById(int $id): ?Model;
+
+    /**
+     * Attach a product to the given order.
+     */
+    public function attachProduct(int $order_id, array $attributes): bool;
 }

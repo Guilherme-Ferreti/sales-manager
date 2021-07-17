@@ -18,6 +18,7 @@ class OrderResource extends JsonResource
             'id' => $this->id,
             'sold_at' => $this->sold_at,
             'products' => ProductResource::collection($this->whenLoaded('products')),
+            'address' => new AddressResource($this->whenLoaded('address')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

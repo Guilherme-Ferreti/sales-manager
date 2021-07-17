@@ -3,8 +3,9 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\Order;
-use App\Repositories\Interfaces\OrderRepositoryInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use App\Repositories\Interfaces\OrderRepositoryInterface;
 
 class OrderRepository extends BaseRepository implements OrderRepositoryInterface
 {
@@ -25,6 +26,16 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
 
     public function findById(int $id): ?Order
     {
-        return $this->model->find($id);
+        return $this->model->with($this->with)->find($id);
+    }
+
+    public function attachProduct(int $order_id, array $attributes): bool
+    {
+        return DB::table('order_product')->insert([
+            'order_id' => $order_id,
+            'product_id' => $attributes['product_id'],
+            'quantity' => $attributes['quantity'],
+            'selling_price' => $attributes['selling_price'],
+        ]);
     }
 }

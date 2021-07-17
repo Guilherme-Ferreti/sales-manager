@@ -5,11 +5,13 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Eloquent\{
     OrderRepository,
-    AddressRepository
+    AddressRepository,
+    ProductRepository
 };
 use App\Repositories\Interfaces\{
     OrderRepositoryInterface,
     AddressRepositoryInterface,
+    ProductRepositoryInterface
 };
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -23,6 +25,7 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
         $this->app->bind(AddressRepositoryInterface::class, AddressRepository::class);
+        $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
     }
 
     /**

@@ -13,6 +13,7 @@ use App\Http\Controllers\Web\OrderController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::redirect('/', '/orders');
 
-Route::resource('orders', OrderController::class)->only('index', 'show', 'create');
+Route::resource('orders', OrderController::class)->except('edit', 'update', 'delete', 'destroy');
+
+Route::redirect('/', route('orders.index'));

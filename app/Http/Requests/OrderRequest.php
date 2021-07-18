@@ -47,7 +47,7 @@ class OrderRequest extends FormRequest
             'address.neighborhood'      => ['required', 'string', 'max:255'],
             'address.city'              => ['required', 'string', 'max:255'],
             'address.state'             => ['required', 'string', new BrazilianState()],
-            'products'                  => ['required', 'array'],
+            'products'                  => ['required', 'array', 'min:1'],
             'products.*.id'             => ['required', 'integer', new ExistsInRepository($this->repository, 'id')],
             'products.*.quantity'       => ['required', 'integer', 'min:1'],
             'products.*.selling_price'  => ['required', 'numeric', 'min:0'],

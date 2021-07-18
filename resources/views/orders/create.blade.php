@@ -64,6 +64,7 @@
                                     placeholder="{{ __('Number') }}"
                                     :value="old('address.number')"
                                     errorKey="address.number"
+                                    required
                                     tabindex="3"
                                 />
                             </div>
@@ -78,6 +79,7 @@
                                     placeholder="{{ __('Neighborhood') }}"
                                     :value="old('address.neighborhood')"
                                     errorKey="address.neighborhood"
+                                    required
                                     tabindex="4"
                                 /> 
                             </div>
@@ -349,7 +351,6 @@
     const orderForm = document.getElementById('order-form');
     
     const addProductForm = orderForm.querySelector('#add-product-form');
-
 
     const setSelectedProduct = (product) => {
         productIdInput.value = product.id;
@@ -627,6 +628,17 @@
     if (document.referrer !== "{{ route('orders.create') }}") {
         clearProducts();
     }
+
+    orderForm.addEventListener('submit', e => {
+        e.preventDefault();
+
+        if (getProducts().length < 1) {
+            alert("{{ __('An order needs to have at least one product.') }}");
+            return;
+        }
+
+        orderForm.submit();
+    });
 
     renderProductsTable();
     addProductsToForm();

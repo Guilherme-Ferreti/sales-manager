@@ -37,6 +37,8 @@ class OrderController extends Controller
             $this->orderRepository->attachProduct($order->id, $product);
         }
 
-        return new OrderResource($this->orderRepository->with(['products', 'address'])->findById($order->id));
+        return (new OrderResource($this->orderRepository->with(['products', 'address'])->findById($order->id)))
+                ->response()
+                ->setStatusCode(201);
     }
 }

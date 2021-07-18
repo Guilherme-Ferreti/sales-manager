@@ -83,6 +83,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
@@ -94,6 +95,7 @@
                                     placeholder="{{ __('City') }}"
                                     :value="old('address.city')"
                                     errorKey="address.city"
+                                    required
                                     tabindex="5"
                                 /> 
                             </div>
@@ -106,6 +108,7 @@
                                     name="address[state]"
                                     :value="old('address.state')"
                                     errorKey="address.state"
+                                    required
                                     tabindex="6"
                                     >
                                     @foreach ($states as $state)
@@ -130,6 +133,7 @@
                                     type="date"
                                     name="sold_at"
                                     :value="old('sold_at')"
+                                    required
                                     tabindex="6"
                                 />
                             </div>
@@ -491,7 +495,7 @@
         pushToProducts(selectedProduct);
 
         renderProductsTable();
-        addSessionProductsToForm();
+        addProductsToForm();
         clearSelectedProduct();
     }
 
@@ -567,7 +571,7 @@
         document.getElementById('products-table-total').innerText = formatCurrency(getProductsTotalPrice());
     }
 
-    const addSessionProductsToForm = () => { 
+    const addProductsToForm = () => { 
         const container = orderForm.querySelector('#product-container');
 
         container.innerHTML = '';
@@ -625,7 +629,6 @@
     }
 
     renderProductsTable();
-
-    addSessionProductsToForm();
+    addProductsToForm();
 </script>
 @endsection

@@ -31,6 +31,10 @@ class OrderController extends Controller
     {
         $order = $this->orderRepository->with('products', 'address')->findById($order_id);
 
+        if (! $order) {
+            abort(404);
+        }
+
         return view('orders.show', compact('order'));
     }
 

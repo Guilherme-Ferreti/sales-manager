@@ -17,7 +17,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if ($request->search) {
-            $products = $this->productRepository->searchByNameOrReference($request->search);
+            $products = $this->productRepository->with('suppliers')->searchByNameOrReference($request->search);
         } else {
             $products = $this->productRepository->all();
         }

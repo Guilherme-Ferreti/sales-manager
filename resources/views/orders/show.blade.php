@@ -35,6 +35,7 @@
                                 <th>{{ __('Price') }}</th>
                                 <th>{{ __('Selling Price') }}</th>
                                 <th>{{ __('Quantity') }}</th>
+                                <th>{{ __('Supplier(s)') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,6 +47,12 @@
                                     <td>{{ format_currency($product->price) }}</td>
                                     <td>{{ format_currency($product->pivot->selling_price) }}</td>
                                     <td>{{ $product->pivot->quantity }}</td>
+                                    <td>
+                                        @foreach ($product->suppliers as $supplier)
+                                            {{ $supplier->name }}
+                                            @if (! $loop->last),&nbsp; @endif 
+                                        @endforeach
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

@@ -14,18 +14,7 @@
         <div class="card card-primary">
             <form method="post" action="{{ route('orders.store') }}" id="order-form">
                 @csrf
-                <div id="product-container">
-                    @foreach (old('products', []) as $product)
-                        <div>
-                            <input type="hidden" name="products[{{ $loop->index }}][id]" value="{{ $product['id']}}"/>
-                            <input type="hidden" name="products[{{ $loop->index }}][name]" value="{{ $product['name']}}"/>
-                            <input type="hidden" name="products[{{ $loop->index }}][reference]" value="{{ $product['reference']}}"/>
-                            <input type="hidden" name="products[{{ $loop->index }}][price]" value="{{ $product['price']}}"/>
-                            <input type="hidden" name="products[{{ $loop->index }}][selling_price]" value="{{ $product['selling_price']}}"/>
-                            <input type="hidden" name="products[{{ $loop->index }}][quantity]" value="{{ $product['quantity']}}"/>
-                        </div>
-                    @endforeach
-                </div>
+                <div id="product-container"></div>
                 <div class="card-body">
                     <div class="row">
                         <h5 class="mb-4">{{ __('Address Information') }}</h5>
@@ -151,7 +140,7 @@
                         <h5 class="mt-4 mb-4">{{ __('Products') }}</h5>
                     </div>
 
-                    <div class="row">
+                    <div class="row" id="add-product-form">
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-2">
@@ -218,20 +207,10 @@
                                         <th>{{ __('Price') }}</th>
                                         <th>{{ __('Selling Price') }}</th>
                                         <th>{{ __('Quantity') }}</th>
+                                        <th>{{ __('Supplier(s)') }}</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach (old('products', []) as $product)
-                                        <tr data-product="{{ json_encode($product) }}">
-                                            <td>{{ $product['id'] }}</td>
-                                            <td>{{ $product['name'] }}</td>
-                                            <td>{{ $product['reference'] }}</td>
-                                            <td>{{ $product['price'] }}</td>
-                                            <td>{{ $product['selling_price'] }}</td>
-                                            <td>{{ $product['quantity'] }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                             <div>
                                 <b>{{ __('Total') }}: <span id="products-table-total">0,00</span></b>
@@ -353,11 +332,6 @@
         ajax.send();
     });
 
-    const productSearchInput = document.getElementById('product-search-input');
-    const productSearchButton = productSearchInput.nextElementSibling;
-    const productSearchTable = document.getElementById('product-search-table');
-    const productSearchModal = document.getElementById('product-search-modal');
-
     const productIdInput = document.getElementById('product-id-input');
     const productNameInput = document.getElementById('product-name-input');
     const productReferenceInput = document.getElementById('product-reference-input');
@@ -369,10 +343,75 @@
     const productsTable = document.getElementById('products-table');
 
     const orderForm = document.getElementById('order-form');
-    const productContainer = orderForm.querySelector('#product-container');
+    
+    const addProductForm = orderForm.querySelector('#add-product-form');
 
-    function clearProductSearchTable() {
+
+    const setSelectedProduct = (product) => {
+        productIdInput.value = product.id;
+        productNameInput.value = product.name;
+        productReferenceInput.value = product.reference;
+        productPriceInput.value = product.price;
+        productSellingPriceInput.value = product.price;
+        productQuantityInput.value = 1;
+
+        sessionStorage.setItem('selected_product', JSON.stringify(product));
+    }
+
+    const getSelectedProduct = () => {
+        return JSON.parse(sessionStorage.getItem('selected_product'));
+    }
+
+    function clearSelectedProduct() {
+        productIdInput.value = '';
+        productNameInput.value = '';
+        productReferenceInput.value = '';
+        productPriceInput.value = '';
+        productSellingPriceInput.value = '';
+        productQuantityInput.value = '';
+
+        sessionStorage.removeItem('selected_product');
+    }
+
+    const productSearchInput = document.getElementById('product-search-input');
+    const productSearchButton = productSearchInput.nextElementSibling;
+    const productSearchTable = document.getElementById('product-search-table');
+    const productSearchModal = document.getElementById('product-search-modal');
+
+    const renderSearchProductTable = (products) => {
+        const tbodyEl = productSearchTable.querySelector('tbody');
+
+        tbodyEl.innerHTML = '';
+
+        products.forEach(product => {
+            const html = `
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>${product.reference}</td>
+                <td>${product.price}</td>
+                <td class="project-actions text-right">
+                    <button class="btn btn-info btn-xs" href="#">
+                        <i class="fas fa-plus"></i>
+                        {{ __('Choose') }}
+                    </button>
+                </td>
+            `;
+
+            const tr = appendToTemplate(tbodyEl, 'tr', html);
+
+            tr.querySelector('button').addEventListener('click', () => {
+                setSelectedProduct(product);
+
+                productSearchModal.querySelector('button[data-dismiss=modal]').click();
+            });
+        });
+
+        productSearchTable.classList.remove('d-none');
+    }
+
+    const clearProductSearchTable = () => {
         productSearchTable.classList.add('d-none');
+
         productSearchTable.querySelector('tbody').innerHTML = '';
     }
 
@@ -407,29 +446,7 @@
                 return;
             }
 
-            const tbodyEl = productSearchTable.querySelector('tbody');
-            tbodyEl.innerHTML = '';
-            
-            response.data.forEach(product => {
-                const html = `
-                    <td>${product.id}</td>
-                    <td>${product.name}</td>
-                    <td>${product.reference}</td>
-                    <td>${product.price}</td>
-                    <td class="project-actions text-right">
-                        <button class="btn btn-info btn-xs" href="#">
-                            <i class="fas fa-plus"></i>
-                            {{ __('Choose') }}
-                        </button>
-                    </td>
-                `;
-
-                const tr = appendToTemplate(tbodyEl, 'tr', html);
-
-                tr.querySelector('button').addEventListener('click', () => selectSearchedProduct(product));
-            });
-
-            productSearchTable.classList.remove('d-none');
+            renderSearchProductTable(response.data);
         }
 
         ajax.open('GET', `{{ route('api.products.index') }}?search=${search}`, true);
@@ -437,36 +454,6 @@
         ajax.setRequestHeader('Accept', 'application/json');
 
         ajax.send();
-    }
-
-    function selectSearchedProduct(product) {
-        productIdInput.value = product.id;
-        productNameInput.value = product.name;
-        productReferenceInput.value = product.reference;
-        productPriceInput.value = product.price;
-        productSellingPriceInput.value = product.price;
-        productQuantityInput.value = 1;
-
-        productSearchModal.querySelector('button[data-dismiss=modal]').click();
-    }
-
-    productSearchButton.addEventListener('click', searchProduct);
-
-    productSearchInput.addEventListener('keypress', e => {
-        if (e.key === 'Enter') {
-            searchProduct();
-        }
-    });
-
-    addProductButton.addEventListener('click', addProductToOrder);
-
-    function clearSelectedProduct() {
-        productIdInput.value = '';
-        productNameInput.value = '';
-        productReferenceInput.value = '';
-        productPriceInput.value = '';
-        productSellingPriceInput.value = '';
-        productQuantityInput.value = '';
     }
 
     function productIsValid(product) {
@@ -481,78 +468,123 @@
         return isValid;
     }
 
-    function addProductToOrder() {
-        const product = {
-            id: productIdInput.value,
-            name: productNameInput.value,
-            reference: productReferenceInput.value,
-            price: productPriceInput.value,
-            selling_price: productSellingPriceInput.value,
-            quantity: productQuantityInput.value
-        };
+    const addProductToOrder = () => {
+        const selectedProduct = getSelectedProduct();
 
-        if (! productIsValid(product)) {
+        if (! selectedProduct) {
             alert("{{ __('Could not add the product to the order.') }}");
             return;
         }
 
-        addProductToProductsTable(product);
-        addProductToForm(product);
+        selectedProduct.selling_price = productSellingPriceInput.value;
+        selectedProduct.quantity = productQuantityInput.value;
+
+        if (! productIsValid(selectedProduct)) {
+            alert("{{ __('Could not add the product to the order.') }}");
+            return;
+        }
+
+        pushToProducts(selectedProduct);
+
+        renderProductsTable();
+        addSessionProductsToForm();
         clearSelectedProduct();
-
-        document.getElementById('products-table-total').innerText = formatCurrency(getProductsTableTotal());
     }
 
-    function addProductToProductsTable(product) {
-        const tbodyEl = productsTable.querySelector('tbody');
-        const html = `
-            <td>${product.id}</td>
-            <td>${product.name}</td>
-            <td>${product.reference}</td>
-            <td>R$ ${product.price}</td>
-            <td>R$ ${product.selling_price}</td>
-            <td>${product.quantity}</td>
-        `;
+    const getProducts = () => {
+        let products = JSON.parse(sessionStorage.getItem('products'));
 
-        const tr = appendToTemplate(tbodyEl, 'tr', html);
+        if (! products) products = [];
 
-        tr.dataset.product = JSON.stringify(product);
+        return products;
     }
 
-    function addProductToForm(product) {
-        if (! productIsValid(product)) {
-            alert("{{ __('Could not add the product to the order.') }}");
-            return;
+    const setProducts = (products) => {
+        sessionStorage.setItem('products', JSON.stringify(products));
+    }
+
+    const pushToProducts = (newProduct) => {
+        let isNew = true;
+
+        const products = getProducts();
+
+        products.forEach(product => {
+            if (product.id === newProduct.id) {
+                product.quantity = newProduct.quantity;
+                product.selling_price = newProduct.selling_price;
+
+                isNew = false;
+            }
+        });
+
+        if (isNew) {
+            products.push(newProduct);
         }
-    
-        const productCounter = getTotalProducts() + 1;
 
-        const html = `
-            <input type="hidden" name="products[${productCounter}][id]" value="${product.id}">
-            <input type="hidden" name="products[${productCounter}][name]" value="${product.name}">
-            <input type="hidden" name="products[${productCounter}][reference]" value="${product.reference}">
-            <input type="hidden" name="products[${productCounter}][price]" value="${product.price}">
-            <input type="hidden" name="products[${productCounter}][selling_price]" value="${product.selling_price}">
-            <input type="hidden" name="products[${productCounter}][quantity]" value="${product.quantity}">
-        `;
-
-        appendToTemplate(productContainer, 'div', html);
+        setProducts(products);
     }
 
-    function getProductsTableTotal() {
+    const clearProducts = () => {
+        sessionStorage.removeItem('products');
+        sessionStorage.removeItem('selected_product');
+    }
+
+    const renderProductsTable = () => {
+        const tbodyEl = productsTable.querySelector('tbody');
+
+        tbodyEl.innerHTML = '';
+
+        const products = getProducts();
+
+        products.forEach(product => {
+            let suppliers = '';
+
+            product.suppliers.forEach(supplier => {
+                suppliers = suppliers  + supplier.name + ', '
+            });
+
+            const html = `
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>${product.reference}</td>
+                <td>${formatCurrency(product.price)}</td>
+                <td>${formatCurrency(product.selling_price)}</td>
+                <td>${product.quantity}</td>
+                <td>${suppliers}</td>
+            `;
+
+            appendToTemplate(tbodyEl, 'tr', html);
+        });
+
+        document.getElementById('products-table-total').innerText = formatCurrency(getProductsTotalPrice());
+    }
+
+    const addSessionProductsToForm = () => { 
+        const container = orderForm.querySelector('#product-container');
+
+        container.innerHTML = '';
+
+        getProducts().forEach((product, index) => {
+            const html = `
+                <input type="hidden" name="products[${index}][id]" value="${product.id}">
+                <input type="hidden" name="products[${index}][selling_price]" value="${product.selling_price}">
+                <input type="hidden" name="products[${index}][quantity]" value="${product.quantity}">
+            `;
+
+            appendToTemplate(container, 'div', html);
+        });
+    }
+
+    const getProductsTotalPrice = () => {
         let total = 0;
 
-        productsTable.querySelectorAll('tbody tr').forEach(tr => {
-            const product = JSON.parse(tr.dataset.product);
+        const products = getProducts();
+
+        products.forEach(product => {
             total += +product.selling_price * +product.quantity;
-            console.log(product, total);
         });
 
         return total;
-    }
-
-    function getTotalProducts() {
-        return productContainer.querySelectorAll('div').length;
     }
 
     function formatCurrency(value) {
@@ -562,6 +594,22 @@
         }).format(value);
     }
 
-    document.getElementById('products-table-total').innerText = formatCurrency(getProductsTableTotal());
+    productSearchButton.addEventListener('click', searchProduct);
+
+    productSearchInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+            searchProduct();
+        }
+    });
+
+    addProductButton.addEventListener('click', addProductToOrder);
+
+    if (document.referrer !== "{{ route('orders.create') }}") {
+        clearProducts();
+    }
+
+    renderProductsTable();
+
+    addSessionProductsToForm();
 </script>
 @endsection

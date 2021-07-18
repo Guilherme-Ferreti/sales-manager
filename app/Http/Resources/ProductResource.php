@@ -22,6 +22,7 @@ class ProductResource extends JsonResource
             'reference' => $this->reference,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'suppliers' => $this->whenLoaded('suppliers'),
             'quantity' => $this->whenPivotLoaded(new OrderProduct(), fn () => $this->pivot->quantity),
             'selling_price' => $this->whenPivotLoaded(new OrderProduct(), fn () => $this->pivot->selling_price),
         ];

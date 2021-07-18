@@ -20,8 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('orders', OrderController::class)
+Route::apiResource('orders', OrderController::class, ['as' => 'api'])
         ->only('index', 'store');
 
-Route::apiResource('products', ProductController::class)
+Route::apiResource('products', ProductController::class, ['as' => 'api'])
         ->only('index');

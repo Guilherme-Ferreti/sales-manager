@@ -33,7 +33,7 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
     {
         return DB::table('order_product')->insert([
             'order_id' => $order_id,
-            'product_id' => $attributes['product_id'],
+            'product_id' => $attributes['id'],
             'quantity' => $attributes['quantity'],
             'selling_price' => $attributes['selling_price'],
         ]);

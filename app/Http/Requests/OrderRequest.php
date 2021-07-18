@@ -41,14 +41,14 @@ class OrderRequest extends FormRequest
     {
         return [
             'sold_at'                   => ['required', 'date_format:Y-m-d'],
-            'address.cep'               => ['required', 'min:9', 'max:9', new Cep()],
+            'address.cep'               => ['required', 'min:8', 'max:9', new Cep()],
             'address.street'            => ['required', 'string', 'max:255'],
             'address.number'            => ['required', 'digits_between:1,6'],
             'address.neighborhood'      => ['required', 'string', 'max:255'],
             'address.city'              => ['required', 'string', 'max:255'],
-            'address.state'             => ['required', 'string', 'max:255', new BrazilianState()],
+            'address.state'             => ['required', 'string', new BrazilianState()],
             'products'                  => ['required', 'array'],
-            'products.*.product_id'     => ['required', 'integer', new ExistsInRepository($this->repository, 'id')],
+            'products.*.id'             => ['required', 'integer', new ExistsInRepository($this->repository, 'id')],
             'products.*.quantity'       => ['required', 'integer', 'min:1'],
             'products.*.selling_price'  => ['required', 'numeric', 'min:0'],
         ];

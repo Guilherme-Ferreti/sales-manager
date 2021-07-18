@@ -2,5 +2,5 @@
 
 function format_currency($value)
 {
-    return 'R$' . number_format($value, 2, ',', '.');
+    return 'R$ ' . number_format($value, 2, ',', '.');
 }

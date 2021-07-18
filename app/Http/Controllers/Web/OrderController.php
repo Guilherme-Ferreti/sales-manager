@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Models\Order;
 use App\Rules\BrazilianState;
 use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
 use App\Repositories\Eloquent\OrderRepository;
 use App\Repositories\Interfaces\AddressRepositoryInterface;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
@@ -23,6 +25,13 @@ class OrderController extends Controller
         $orders = $this->orderRepository->with('products')->all();
 
         return view('orders.index', compact('orders'));
+    }
+
+    public function show(Request $request, int $order_id)
+    {
+        $order = $this->orderRepository->with('products', 'address')->findById($order_id);
+
+        return view('orders.show', compact('order'));
     }
 
     public function create()
@@ -44,6 +53,6 @@ class OrderController extends Controller
             $this->orderRepository->attachProduct($order->id, $product);
         }
 
-        return redirect()->back()->with('success', __('Order saved successfully.'));
+        return redirect()->route('orders.show', $order);
     }
 }

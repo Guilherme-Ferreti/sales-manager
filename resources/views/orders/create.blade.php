@@ -464,6 +464,10 @@
                 isValid = false;
             }
         });
+
+        if (+product.quantity < 1 || +product.selling_price < 0.01) {
+            isValid = false;
+        }
         
         return isValid;
     }
@@ -537,6 +541,10 @@
         const products = getProducts();
 
         products.forEach(product => {
+            if (! productIsValid(product)) {
+                return;
+            }
+
             let suppliers = '';
 
             product.suppliers.forEach(supplier => {
@@ -565,6 +573,10 @@
         container.innerHTML = '';
 
         getProducts().forEach((product, index) => {
+            if (! productIsValid(product)) {
+                return;
+            }
+
             const html = `
                 <input type="hidden" name="products[${index}][id]" value="${product.id}">
                 <input type="hidden" name="products[${index}][selling_price]" value="${product.selling_price}">
@@ -581,6 +593,10 @@
         const products = getProducts();
 
         products.forEach(product => {
+            if (! productIsValid(product)) {
+                return;
+            }
+
             total += +product.selling_price * +product.quantity;
         });
 

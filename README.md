@@ -20,10 +20,14 @@ Copy .env.example to create your own .env file.
 
 ```cp .env.example .env```
 
-Configure database connection and run the migrations.
+Configure database connection and run the migrations and seeder.
 
-```php artisan migrate```
+```php artisan migrate --seed```
 
-Finally, seed the database:
+Generate the application encryption key:
 
-```php artisan db:seed```
+```php artisan key:generate```
+
+Finally, serve the application:
+
+```php artisan serve```

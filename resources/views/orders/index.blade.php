@@ -55,6 +55,10 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="card-footer">
+            {{ $orders->links() }}
+        </div>
     </div>
 </div>
 @endsection

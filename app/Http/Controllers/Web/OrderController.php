@@ -22,7 +22,7 @@ class OrderController extends Controller
 
     public function index()
     {
-        $orders = $this->orderRepository->with('products')->all();
+        $orders = $this->orderRepository->with('products')->allPaginated();
 
         return view('orders.index', compact('orders'));
     }

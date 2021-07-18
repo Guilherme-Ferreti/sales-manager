@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
     {
         $products = Product::factory(15)->has(Supplier::factory(rand(1, 3)))->create();
         
-        $orders = Order::factory(5)->has(Address::factory())->create();
+        $orders = Order::factory(30)->has(Address::factory())->create();
 
         foreach ($orders as $order) {
             $products->random(rand(1, 5))->each(fn ($product) =>

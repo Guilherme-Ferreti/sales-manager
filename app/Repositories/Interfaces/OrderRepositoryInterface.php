@@ -18,6 +18,11 @@ interface OrderRepositoryInterface
     public function all(): Collection;
 
     /**
+     * Get all orders paginated.
+     */
+    public function allPaginated(int $page, int $perPage);
+
+    /**
      * Create an order.
      */
     public function create(array $attributes): ?Model;

@@ -19,6 +19,11 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         return $this->model->with($this->with)->orderBy('created_at', 'desc')->get();
     }
 
+    public function allPaginated(int $page = 1, int $perPage = 15)
+    {
+        return $this->model->with($this->with)->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
     public function create(array $attributes): ?Order
     {
         return $this->model->create($attributes);

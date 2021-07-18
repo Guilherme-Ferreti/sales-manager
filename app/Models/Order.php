@@ -35,6 +35,16 @@ class Order extends Model
 
     public function getTotalValueAttribute(): float
     {
-        return ($this->relationLoaded('products') ? $this->products->sum('pivot.selling_price') : 0);
+        if (! $this->relationLoaded('products')) {
+            return 0;
+        }
+
+        $total = 0;
+
+        foreach ($this->products as $product) {
+            $total += $product->pivot->selling_price * $product->pivot->quantity;
+        }
+        
+        return $total;
     }
 }

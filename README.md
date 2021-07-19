@@ -2,6 +2,12 @@
 
 Application for managing sales operations.
 
+## Deployment Server
+
+The application is hosted on Heroku. It can be accessed using the following link. Make sure it is being acessed using HTTPS protocol.
+
+``https://sales-manager-guilherme.herokuapp.com``
+
 ## Requirements
 
 * PHP 7.3 or newer.

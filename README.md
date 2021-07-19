@@ -8,6 +8,10 @@ The application is hosted on Heroku. It can be accessed using the following link
 
 ``https://sales-manager-guilherme.herokuapp.com``
 
+## Documentation
+
+Database documentation can be found in *docs/database* folder.
+
 ## Requirements
 
 * PHP 7.3 or newer.
